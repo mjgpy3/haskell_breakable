@@ -5,6 +5,7 @@ import Tokenizer
 
 test_empty_string = TestCase (assertEqual "for an empty string" [] (tokenize ""))
 test_space = TestCase (assertEqual "for a space" [] (tokenize " "))
+test_tab = TestCase (assertEqual "for a tab" [] (tokenize "\t"))
 test_identifier = TestCase (assertEqual "for an identifier" [Identifier "x"] (tokenize "x"))
 test_newline = TestCase (assertEqual "for a newline" [Newline] (tokenize "\n"))
 test_open_paren = TestCase (assertEqual "for a (" [LeftParen] (tokenize "("))
@@ -32,10 +33,17 @@ test_empty_string_single_quotes = TestCase (assertEqual "for ''" [BfString []] (
 test_empty_string_double_quotes = TestCase (assertEqual "for \"\"" [BfString []] (tokenize "\"\""))
 test_nonempty_string = TestCase (assertEqual "for nonempty string" [BfString "a"] (tokenize "'a'"))
 test_string_and_other_token = TestCase (assertEqual "for string and other token" [BfString "foo", Plus] (tokenize "'foo' +"))
+test_single_quotes_can_contain_double = TestCase (assertEqual "for single containing double" [BfString "\""] (tokenize "'\"'"))
+test_double_quotes_can_contain_single = TestCase (assertEqual "for double containing single" [BfString "'"] (tokenize "\"'\""))
+
+test_lone_number_is_integer = TestCase (assertEqual "for 1 num" [BfInteger "4"] (tokenize "4"))
+test_multiple_nums_in_line_make_integer = TestCase (assertEqual "for muliple nums" [BfInteger "42"] (tokenize "42"))
+test_int_with_other_tokens = TestCase (assertEqual "for int with others" [BfInteger "42" , Plus] (tokenize "42 + "))
 
 tests = TestList 
   [test_empty_string,
   test_space,
+  test_tab,
   test_identifier,
   test_newline,
   test_open_paren,
@@ -56,6 +64,11 @@ tests = TestList
   test_empty_string_single_quotes,
   test_empty_string_double_quotes,
   test_nonempty_string,
-  test_string_and_other_token]
+  test_string_and_other_token,
+  test_lone_number_is_integer,
+  test_multiple_nums_in_line_make_integer,
+  test_int_with_other_tokens,
+  test_single_quotes_can_contain_double,
+  test_double_quotes_can_contain_single]
 
 main = runTestTT tests

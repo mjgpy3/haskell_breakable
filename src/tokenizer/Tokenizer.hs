@@ -8,6 +8,7 @@ import Data.List
 data BfToken = 
   Identifier String |
   BfString String |
+  BfInteger String |
   Newline |
   LeftParen |
   RightParen |
@@ -25,10 +26,12 @@ tokenize (x:xs)
   | isIgnored x       = tokenize xs
   | single /= Nothing = (unjust single):tokenize xs
   | isStringDelimeter x = (BfString (fst stringSplit)):tokenize (drop 1 (snd stringSplit))
+  | isNumeric x       = (BfInteger (x:(fst numberSplit))):tokenize (snd numberSplit)
   | otherwise         = (Identifier (x:(fst identSplit))):tokenize (snd identSplit)
   where single = singleChar x
         identSplit = splitAt (whereEnds 0 isIdentifier xs) xs
-        stringSplit = splitAt (whereEnds 0 (not.isStringDelimeter) xs) xs
+        stringSplit = splitAt (whereEnds 0 ((/=) x) xs) xs
+        numberSplit = splitAt (whereEnds 0 isNumeric xs) xs
 
 unjust :: Maybe a -> a
 unjust Nothing = error "unjust should never be called on Nothing"

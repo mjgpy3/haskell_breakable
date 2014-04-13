@@ -6,10 +6,15 @@ import Tokenizer
 test_empty_string = TestCase (assertEqual "for an empty string" [] (tokenize ""))
 test_space = TestCase (assertEqual "for a space" [] (tokenize " "))
 test_tab = TestCase (assertEqual "for a tab" [] (tokenize "\t"))
+test_comma = TestCase (assertEqual "for a comma" [Comma] (tokenize ","))
 test_identifier = TestCase (assertEqual "for an identifier" [Identifier "x"] (tokenize "x"))
 test_newline = TestCase (assertEqual "for a newline" [Newline] (tokenize "\n"))
 test_open_paren = TestCase (assertEqual "for a (" [LeftParen] (tokenize "("))
 test_close_paren = TestCase (assertEqual "for a )" [RightParen] (tokenize ")"))
+test_open_square = TestCase (assertEqual "for [" [LeftSquare] (tokenize "["))
+test_close_square = TestCase (assertEqual "for ]" [RightSquare] (tokenize "]"))
+test_open_curl = TestCase (assertEqual "for {" [LeftCurl] (tokenize "{"))
+test_close_curl = TestCase (assertEqual "for }" [RightCurl] (tokenize "}"))
 test_dot = TestCase (assertEqual "for a ." [Dot] (tokenize "."))
 test_plus = TestCase (assertEqual "for a +" [Plus] (tokenize "+"))
 test_minus = TestCase (assertEqual "for a -" [Minus] (tokenize "-"))
@@ -35,10 +40,20 @@ test_nonempty_string = TestCase (assertEqual "for nonempty string" [BfString "a"
 test_string_and_other_token = TestCase (assertEqual "for string and other token" [BfString "foo", Plus] (tokenize "'foo' +"))
 test_single_quotes_can_contain_double = TestCase (assertEqual "for single containing double" [BfString "\""] (tokenize "'\"'"))
 test_double_quotes_can_contain_single = TestCase (assertEqual "for double containing single" [BfString "'"] (tokenize "\"'\""))
+test_singles_with_escaped_single = TestCase (assertEqual "for '\\''" [BfString "\\'"] (tokenize "'\\''"))
 
 test_lone_number_is_integer = TestCase (assertEqual "for 1 num" [BfInteger "4"] (tokenize "4"))
 test_multiple_nums_in_line_make_integer = TestCase (assertEqual "for muliple nums" [BfInteger "42"] (tokenize "42"))
 test_int_with_other_tokens = TestCase (assertEqual "for int with others" [BfInteger "42" , Plus] (tokenize "42 + "))
+
+test_class = TestCase (assertEqual "kwd class" [KwdClass] (tokenize "class"))
+test_meth = TestCase (assertEqual "kwd meth" [KwdMeth] (tokenize "meth"))
+test_module = TestCase (assertEqual "kwd module" [KwdModule] (tokenize "module"))
+test_not = TestCase (assertEqual "kwd not" [KwdNot] (tokenize "not"))
+-- and
+-- or
+
+-- TODO: all double tokens (e.g. :=, /=, ...)
 
 tests = TestList 
   [test_empty_string,
@@ -69,6 +84,15 @@ tests = TestList
   test_multiple_nums_in_line_make_integer,
   test_int_with_other_tokens,
   test_single_quotes_can_contain_double,
-  test_double_quotes_can_contain_single]
+  test_double_quotes_can_contain_single,
+  test_singles_with_escaped_single,
+  test_class,
+  test_meth,
+  test_module,
+  test_not,
+  test_open_square,
+  test_comma,
+  test_open_curl,
+  test_close_curl]
 
 main = runTestTT tests

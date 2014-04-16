@@ -16,6 +16,10 @@ test_close_square = TestCase (assertEqual "for ]" [RightSquare] (tokenize "]"))
 test_open_curl = TestCase (assertEqual "for {" [LeftCurl] (tokenize "{"))
 test_close_curl = TestCase (assertEqual "for }" [RightCurl] (tokenize "}"))
 test_dot = TestCase (assertEqual "for a ." [Dot] (tokenize "."))
+test_equal = TestCase (assertEqual "for =" [Equal] (tokenize "="))
+test_gt = TestCase (assertEqual "for >" [Gt] (tokenize ">"))
+test_lt = TestCase (assertEqual "for <" [Lt] (tokenize "<"))
+test_lambda = TestCase (assertEqual "for \\" [Lambda] (tokenize "\\"))
 test_plus = TestCase (assertEqual "for a +" [Plus] (tokenize "+"))
 test_minus = TestCase (assertEqual "for a -" [Minus] (tokenize "-"))
 test_times = TestCase (assertEqual "for a *" [Times] (tokenize "*"))
@@ -50,10 +54,18 @@ test_class = TestCase (assertEqual "kwd class" [KwdClass] (tokenize "class"))
 test_meth = TestCase (assertEqual "kwd meth" [KwdMeth] (tokenize "meth"))
 test_module = TestCase (assertEqual "kwd module" [KwdModule] (tokenize "module"))
 test_not = TestCase (assertEqual "kwd not" [KwdNot] (tokenize "not"))
--- and
--- or
+test_and = TestCase (assertEqual "kwd and" [KwdAnd] (tokenize "and"))
+test_or = TestCase (assertEqual "kwd or" [KwdOr] (tokenize "or"))
+test_if = TestCase (assertEqual "kwd if" [KwdIf] (tokenize "if"))
+test_for = TestCase (assertEqual "kwd for" [KwdFor] (tokenize "for"))
+test_in = TestCase (assertEqual "kwd in" [KwdIn] (tokenize "in"))
+test_while = TestCase (assertEqual "kwd while" [KwdWhile] (tokenize "while"))
 
--- TODO: all double tokens (e.g. :=, /=, ...)
+test_assign = TestCase (assertEqual "for assign" [Assign] (tokenize ":="))
+test_neq = TestCase (assertEqual "for neq" [NotEqual] (tokenize "/="))
+test_leq = TestCase (assertEqual "for leq" [Leq] (tokenize "<="))
+test_geq = TestCase (assertEqual "for geq" [Geq] (tokenize ">="))
+test_arrow = TestCase (assertEqual "for ->" [Arrow] (tokenize "->"))
 
 tests = TestList 
   [test_empty_string,
@@ -64,6 +76,11 @@ tests = TestList
   test_open_paren,
   test_close_paren,
   test_dot,
+  test_equal,
+  test_gt,
+  test_lt,
+  test_lambda,
+  test_arrow,
   test_plus,
   test_minus,
   test_times,
@@ -93,6 +110,16 @@ tests = TestList
   test_open_square,
   test_comma,
   test_open_curl,
-  test_close_curl]
+  test_close_curl,
+  test_and,
+  test_or,
+  test_if,
+  test_for,
+  test_in,
+  test_while,
+  test_assign,
+  test_neq,
+  test_leq,
+  test_geq]
 
 main = runTestTT tests

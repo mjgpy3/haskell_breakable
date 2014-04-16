@@ -16,6 +16,7 @@ data BfToken =
   KwdAnd |
   KwdOr |
   KwdIf |
+  KwdElse |
   KwdFor |
   KwdIn |
   KwdWhile |
@@ -24,6 +25,7 @@ data BfToken =
   LeftParen | RightParen |
   LeftSquare | RightSquare |
   Dot |
+  Pipe |
   Comma |
   Lambda |
   Arrow |
@@ -69,6 +71,7 @@ kwdOrIdent w =
     "and" -> KwdAnd 
     "or" -> KwdOr 
     "if" -> KwdIf 
+    "else" -> KwdElse
     "for" -> KwdFor 
     "in" -> KwdIn 
     "while" -> KwdWhile 
@@ -104,6 +107,7 @@ singleChar x =
     '>' -> Just Gt
     '<' -> Just Lt
     '.' -> Just Dot
+    '|' -> Just Pipe
     ',' -> Just Comma
     '\\' -> Just Lambda
     '+' -> Just Plus

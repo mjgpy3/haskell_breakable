@@ -16,6 +16,7 @@ test_close_square = TestCase (assertEqual "for ]" [RightSquare] (tokenize "]"))
 test_open_curl = TestCase (assertEqual "for {" [LeftCurl] (tokenize "{"))
 test_close_curl = TestCase (assertEqual "for }" [RightCurl] (tokenize "}"))
 test_dot = TestCase (assertEqual "for a ." [Dot] (tokenize "."))
+test_pipe = TestCase (assertEqual "for a |" [Pipe] (tokenize "|"))
 test_equal = TestCase (assertEqual "for =" [Equal] (tokenize "="))
 test_gt = TestCase (assertEqual "for >" [Gt] (tokenize ">"))
 test_lt = TestCase (assertEqual "for <" [Lt] (tokenize "<"))
@@ -57,6 +58,7 @@ test_not = TestCase (assertEqual "kwd not" [KwdNot] (tokenize "not"))
 test_and = TestCase (assertEqual "kwd and" [KwdAnd] (tokenize "and"))
 test_or = TestCase (assertEqual "kwd or" [KwdOr] (tokenize "or"))
 test_if = TestCase (assertEqual "kwd if" [KwdIf] (tokenize "if"))
+test_else = TestCase (assertEqual "kwd else" [KwdElse] (tokenize "else"))
 test_for = TestCase (assertEqual "kwd for" [KwdFor] (tokenize "for"))
 test_in = TestCase (assertEqual "kwd in" [KwdIn] (tokenize "in"))
 test_while = TestCase (assertEqual "kwd while" [KwdWhile] (tokenize "while"))
@@ -76,6 +78,7 @@ tests = TestList
   test_open_paren,
   test_close_paren,
   test_dot,
+  test_pipe,
   test_equal,
   test_gt,
   test_lt,
@@ -114,6 +117,7 @@ tests = TestList
   test_and,
   test_or,
   test_if,
+  test_else,
   test_for,
   test_in,
   test_while,

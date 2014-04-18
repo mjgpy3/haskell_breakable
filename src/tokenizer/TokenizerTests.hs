@@ -51,6 +51,9 @@ test_lone_number_is_integer = TestCase (assertEqual "for 1 num" [BfInteger "4"] 
 test_multiple_nums_in_line_make_integer = TestCase (assertEqual "for muliple nums" [BfInteger "42"] (tokenize "42"))
 test_int_with_other_tokens = TestCase (assertEqual "for int with others" [BfInteger "42" , Plus] (tokenize "42 + "))
 
+test_floats_have_periods = TestCase (assertEqual "for float" [BfFloat "4.2"] (tokenize "4.2"))
+test_float_with_longer_beg = TestCase (assertEqual "for xxxx.y" [BfFloat "42.2"] (tokenize "42.2"))
+
 test_class = TestCase (assertEqual "kwd class" [KwdClass] (tokenize "class"))
 test_meth = TestCase (assertEqual "kwd meth" [KwdMeth] (tokenize "meth"))
 test_module = TestCase (assertEqual "kwd module" [KwdModule] (tokenize "module"))
@@ -124,6 +127,8 @@ tests = TestList
   test_assign,
   test_neq,
   test_leq,
-  test_geq]
+  test_geq,
+  test_floats_have_periods,
+  test_float_with_longer_beg]
 
 main = runTestTT tests

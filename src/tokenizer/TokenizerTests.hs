@@ -53,6 +53,10 @@ test_int_with_other_tokens = TestCase (assertEqual "for int with others" [BfInte
 
 test_floats_have_periods = TestCase (assertEqual "for float" [BfFloat "4.2"] (tokenize "4.2"))
 test_float_with_longer_beg = TestCase (assertEqual "for xxxx.y" [BfFloat "42.2"] (tokenize "42.2"))
+test_float_and_others = TestCase (assertEqual "for float + float" [BfFloat "4.2", Plus, BfFloat "3.14"] (tokenize "4.2 + 3.14"))
+test_float_and_dot = TestCase (assertEqual "for 4.2." [BfFloat "4.2", Dot] (tokenize "4.2."))
+
+test_double_char_and_others = TestCase (assertEqual "for /= 4" [NotEqual, BfInteger "4"] (tokenize "/= 4"))
 
 test_class = TestCase (assertEqual "kwd class" [KwdClass] (tokenize "class"))
 test_meth = TestCase (assertEqual "kwd meth" [KwdMeth] (tokenize "meth"))
@@ -129,6 +133,9 @@ tests = TestList
   test_leq,
   test_geq,
   test_floats_have_periods,
-  test_float_with_longer_beg]
+  test_float_with_longer_beg,
+  test_float_and_others,
+  test_double_char_and_others,
+  test_float_and_dot]
 
 main = runTestTT tests

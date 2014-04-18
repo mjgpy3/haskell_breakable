@@ -4,6 +4,7 @@ module Tokenizer
 
 import CharIdentifier
 import Data.List
+import Data.Maybe
 
 data BfToken =
   Identifier String |
@@ -45,20 +46,25 @@ tokenize :: String -> [BfToken]
 tokenize [] = []
 tokenize r@(x:xs)
   | isIgnored x         = tokenize xs
-  | double /= Nothing   = [unjust double]
-  | single /= Nothing   = (unjust single):tokenize xs
-  | isStringDelimeter x = (BfString (fst stringSplit)):tokenize (drop 1 (snd stringSplit))
-  | isNumeric x         = number:tokenize (snd numberSplit)
-  | isIdentifier x      = (kwdOrIdent (x:(fst identSplit))):tokenize (snd identSplit)
+  | isJust double       = unjust double: tokenize (tail xs)
+  | isJust single       = unjust single:tokenize xs
+  | isStringDelimeter x = BfString str:tokenize (drop 1 postStr)
+  | isNumeric x         = asBfNumber (x:num):tokenize postNum
+  | isIdentifier x      = kwdOrIdent (x:ident):tokenize postIdent
   | otherwise           = error ("Unrecognized token: " ++ [x])
   where single = singleChar x
         double = doubleChar $ take 2 r
-        identSplit = splitAt (whereEnds 0 isIdentifier xs) xs
-        stringSplit = splitAt (whereStringEnds 0 ((/=) x) xs) xs
-        numberSplit = splitAt (whereNumberEnds 0 isNumeric xs) xs
-        joinedNumber = x:(fst numberSplit)
-        number = if elem '.' joinedNumber then BfFloat joinedNumber else BfInteger joinedNumber
-        hasNext = length xs > 0
+        (ident, postIdent) = split whereEnds isIdentifier xs
+        (str, postStr) = split whereStringEnds (x /=) xs
+        (num, postNum) = split whereNumberEndsOrDot isNumeric xs
+
+split :: (Int -> (Char -> Bool) -> String -> Int) -> (Char -> Bool) -> String -> (String, String)
+split checkEnd whereImTrue onString = splitAt (checkEnd 0 whereImTrue onString) onString
+
+asBfNumber :: String -> BfToken
+asBfNumber number
+  | '.' `elem` number = BfFloat number
+  | otherwise         = BfInteger number
 
 unjust :: Maybe a -> a
 unjust Nothing = error "unjust should never be called on Nothing"
@@ -83,8 +89,8 @@ kwdOrIdent w =
 whereStringEnds :: Int -> (Char -> Bool) -> String -> Int
 whereStringEnds x _ [] = x
 whereStringEnds x f (s:ss)
-  | s == '\\' = whereEnds (x+2) f (tail ss)
-  | f s       = whereEnds (x+1) f ss
+  | s == '\\' = whereStringEnds (x+2) f (tail ss)
+  | f s       = whereStringEnds (x+1) f ss
   | otherwise = x
 
 whereEnds :: Int -> (Char -> Bool) -> String -> Int
@@ -93,13 +99,19 @@ whereEnds x f (s:ss)
   | f s       = whereEnds (x+1) f ss
   | otherwise = x
 
-whereNumberEnds :: Int -> (Char -> Bool) -> String -> Int
-whereNumberEnds x _ [] = x
-whereNumberEnds x f (s:ss)
-  | f s || s == '.' = whereNumberEnds (x+1) f ss
-  | otherwise = x
+whereNumberEndsOrDot :: Int -> (Char -> Bool) -> String -> Int
+whereNumberEndsOrDot x f = whereNumberEnds x f False
 
-doubleChar :: [Char] -> Maybe BfToken
+whereNumberEnds :: Int -> (Char -> Bool) -> Bool -> String -> Int
+whereNumberEnds x _ _ [] = x
+whereNumberEnds x f dotFound (s:ss)
+  | f s || unfoundAndCurrent = whereNumberEnds (x+1) f foundOrCurrent ss
+  | otherwise                   = x
+  where currentIsDot = s == '.'
+        foundOrCurrent = currentIsDot || dotFound
+        unfoundAndCurrent = currentIsDot && not dotFound
+
+doubleChar :: String -> Maybe BfToken
 doubleChar x =
   case x of
     "/=" -> Just NotEqual
@@ -132,5 +144,3 @@ singleChar x =
     '=' -> Just Equal
     '%' -> Just Modulus
     _ -> Nothing
-
-main = print $ whereNumberEnds 0 isNumeric "42.5"

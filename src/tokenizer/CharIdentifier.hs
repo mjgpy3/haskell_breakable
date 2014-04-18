@@ -4,17 +4,19 @@ module CharIdentifier (isStringDelimeter,
                        isNumeric) where
 
 isStringDelimeter :: Char -> Bool
-isStringDelimeter = includes ['\'', '"']
+isStringDelimeter = includes "'\""
 
 isIgnored :: Char -> Bool
-isIgnored = includes [' ', '\t']
+isIgnored = includes " \t"
 
 isIdentifier :: Char -> Bool
-isIdentifier = includes (['a'..'z'] ++ ['A'..'Z'] ++ ['_'])
+isIdentifier = includes (['a'..'z'] ++ ['A'..'Z'] ++ "_")
 
 isNumeric :: Char -> Bool
-isNumeric = includes ['0'..'9']
+isNumeric = includes numbers
+
+numbers = ['0'..'9']
 
 -- Really just switches elem params
 includes :: (Eq a) => [a] -> a -> Bool
-includes xs x = elem x xs
+includes xs x = x `elem` xs

@@ -50,12 +50,12 @@ tokenize r@(x:xs)
   | isJust single       = unjust single:tokenize xs
   | isStringDelimeter x = BfString str:tokenize (drop 1 postStr)
   | isNumeric x         = asBfNumber (x:num):tokenize postNum
-  | isIdentifier x      = kwdOrIdent (x:ident):tokenize postIdent
+  | isIdentifier x      = kwdOrIdent ident:tokenize postIdent
   | otherwise           = error ("Unrecognized token: " ++ [x])
   where single = singleChar x
         double = doubleChar $ take 2 r
-        (ident, postIdent) = split whereEnds isIdentifier xs
-        (str, postStr) = split whereStringEnds (x /=) xs
+        (ident, postIdent) = splitIdent [] r
+        (str, postStr) = splitString [] x xs
         (num, postNum) = split whereNumberEndsOrDot isNumeric xs
 
 split :: (Int -> (Char -> Bool) -> String -> Int) -> (Char -> Bool) -> String -> (String, String)
@@ -86,18 +86,18 @@ kwdOrIdent w =
     "while" -> KwdWhile
     _ -> Identifier w
 
-whereStringEnds :: Int -> (Char -> Bool) -> String -> Int
-whereStringEnds x _ [] = x
-whereStringEnds x f (s:ss)
-  | s == '\\' = whereStringEnds (x+2) f (tail ss)
-  | f s       = whereStringEnds (x+1) f ss
-  | otherwise = x
+splitString :: String -> Char -> String -> (String, String)
+splitString x _ [] = (x, [])
+splitString x d (s:ss)
+  | s == '\\' = splitString (x ++ [s] ++ [head ss]) d (tail ss)
+  | s /= d    = splitString (x ++ [s]) d ss
+  | otherwise = (x, ss)
 
-whereEnds :: Int -> (Char -> Bool) -> String -> Int
-whereEnds x _ [] = x
-whereEnds x f (s:ss)
-  | f s       = whereEnds (x+1) f ss
-  | otherwise = x
+splitIdent :: String -> String -> (String, String)
+splitIdent b [] =  (b, [])
+splitIdent b w@(s:ss)
+  | isIdentifier s = splitIdent (b ++ [s]) ss
+  | otherwise      = (b, w)
 
 whereNumberEndsOrDot :: Int -> (Char -> Bool) -> String -> Int
 whereNumberEndsOrDot x f = whereNumberEnds x f False

@@ -29,6 +29,7 @@ data BfToken =
   Dot |
   Pipe |
   Comma |
+  Colon |
   Lambda |
   Arrow |
   Plus |
@@ -36,6 +37,7 @@ data BfToken =
   Times |
   Divide |
   Modulus |
+  Power |
   Assign |
   Equal | NotEqual |
   Lt | Gt |
@@ -136,6 +138,7 @@ singleChar x =
     '.' -> Just Dot
     '|' -> Just Pipe
     ',' -> Just Comma
+    ':' -> Just Colon
     '\\' -> Just Lambda
     '+' -> Just Plus
     '-' -> Just Minus
@@ -143,4 +146,5 @@ singleChar x =
     '/' -> Just Divide
     '=' -> Just Equal
     '%' -> Just Modulus
+    '^' -> Just Power
     _ -> Nothing

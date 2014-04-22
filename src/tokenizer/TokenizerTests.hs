@@ -7,6 +7,7 @@ test_empty_string = TestCase (assertEqual "for an empty string" [] (tokenize "")
 test_space = TestCase (assertEqual "for a space" [] (tokenize " "))
 test_tab = TestCase (assertEqual "for a tab" [] (tokenize "\t"))
 test_comma = TestCase (assertEqual "for a comma" [Comma] (tokenize ","))
+test_colon = TestCase (assertEqual "for a colon" [Colon] (tokenize ":"))
 test_identifier = TestCase (assertEqual "for an identifier" [Identifier "x"] (tokenize "x"))
 test_newline = TestCase (assertEqual "for a newline" [Newline] (tokenize "\n"))
 test_open_paren = TestCase (assertEqual "for a (" [LeftParen] (tokenize "("))
@@ -26,6 +27,7 @@ test_minus = TestCase (assertEqual "for a -" [Minus] (tokenize "-"))
 test_times = TestCase (assertEqual "for a *" [Times] (tokenize "*"))
 test_divide = TestCase (assertEqual "for a /" [Divide] (tokenize "/"))
 test_modulus = TestCase (assertEqual "for a %" [Modulus] (tokenize "%"))
+test_power = TestCase (assertEqual "for a ^" [Power] (tokenize "^"))
 test_two_singles = TestCase (assertEqual "for two singles" [LeftParen, RightParen] (tokenize "()"))
 test_single_then_space = TestCase (assertEqual "for a single then space" [Plus] (tokenize "+ "))
 test_space_then_single = TestCase (assertEqual "for a space then single" [Minus] (tokenize " -"))
@@ -116,9 +118,11 @@ tests = TestList
   test_class,
   test_meth,
   test_module,
+  test_power,
   test_not,
   test_open_square,
   test_comma,
+  test_colon,
   test_open_curl,
   test_close_curl,
   test_and,

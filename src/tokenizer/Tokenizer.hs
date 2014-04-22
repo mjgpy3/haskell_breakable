@@ -56,9 +56,9 @@ tokenize r@(x:xs)
   | otherwise           = error ("Unrecognized token: " ++ [x])
   where single = singleChar x
         double = doubleChar $ take 2 r
-        (ident, postIdent) = splitIdent [] r
+        (ident, postIdent) = splitIdent [x] xs
         (str, postStr) = splitString [] x xs
-        (num, postNum) = splitNumber [] False r
+        (num, postNum) = splitNumber [x] False xs
 
 unjust :: Maybe a -> a
 unjust Nothing = error "unjust should never be called on Nothing"
